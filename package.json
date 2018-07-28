@@ -53,11 +53,14 @@
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-ionic-webview": {},
       "cordova-plugin-ionic-keyboard": {},
-      "cordova-plugin-camera": {}
+      "cordova-plugin-camera": {
+        "CAMERA_USAGE_DESCRIPTION": "Testing the camera",
+        "PHOTOLIBRARY_USAGE_DESCRIPTION": "Testing the camera"
+      }
     },
     "platforms": [
-      "android",
-      "ios"
+      "ios",
+      "android"
     ]
   }
 }
