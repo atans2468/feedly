@@ -1,0 +1,19 @@
+page-feed {
+    .rowStyle{
+        border: 1px solid map-get($colors, danger);
+        border-radius: 30px;
+        margin-top: 15px;
+
+        ion-input{
+            margin-top: 5px;
+        }
+    }
+
+    .bottomBar{
+        background-color: map-get($colors, semi-light);
+
+        .borderRight{
+            border-right: 1px solid map-get($colors, light);
+        }
+    }
+}
