@@ -18,6 +18,7 @@ export class FeedPage {
   pageSize: number = 10;
   cursor: any;
   infiniteEvent: any;
+  image: string;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private loadCtrl: LoadingController, private toastCtrl: ToastController, private camera: Camera) {
   
@@ -118,11 +119,15 @@ export class FeedPage {
       created: firebase.firestore.FieldValue.serverTimestamp(),
       owner: firebase.auth().currentUser.uid,
       owner_name: firebase.auth().currentUser.displayName
-    }).then((doc) =>{
+    }).then( async (doc) =>{
+      console.log(doc);
 
-      this.getPosts();
+      if(this.image){
+        await this.upload(doc.id)
+      }
 
       this.text = '';
+      this.image = undefined;
 
       let toast = this.toastCtrl.create({
         message: "Your post was submitted successfully",
@@ -130,7 +135,7 @@ export class FeedPage {
         position: 'top'
       }).present();
 
-      console.log(doc);
+      this.getPosts();
 
     }).catch((err) => {
       console.log(err);
@@ -163,6 +168,8 @@ export class FeedPage {
 
     this.camera.getPicture(options).then((base64Image) => {
       console.log(base64Image);
+      
+      this.image = "data:image/png;base64," + base64Image;
     }).catch((err) => {
       console.log(err);
     })
@@ -180,6 +187,38 @@ export class FeedPage {
       }).present();
 
     });
+  }
+
+  upload(name: string){
+
+    return new Promise((resolve, reject) => {
+      
+      let ref = firebase.storage().ref("postImages/" + name);
+      
+      let uploadTask = ref.putString(this.image.split(',')[1], "base64")
+  
+      uploadTask.on("state_changed", (taskSnapshot) => {
+        console.log(taskSnapshot)
+      }), (error) => {
+        console.log(error)
+      }, () => {
+        console.log("The upload has completed");
+  
+        uploadTask.snapshot.ref.getDownloadURL().then((url) => {
+          
+          firebase.firestore().collection("posts").doc(name).update({
+            image: url
+          }).then(() => {
+            resolve()
+          }).catch((err) => {
+            reject()
+          })
+  
+        })
+      }
+
+    })
+  
   }
 
 }
